@@ -19,7 +19,7 @@ services:
       - ./data/kafka:/kafka
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      - KAFKA_ADVERTISED_HOST_NAME=10.0.0.13
+      - KAFKA_ADVERTISED_HOST_NAME=172.16.57.1
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
       - JMX_PORT=9999
     depends_on:
@@ -29,7 +29,7 @@ services:
   cmak:
     image: vimagick/cmak
     ports:
-      - "9000:9000"
+      - "9001:9000"
     environment:
       - ZK_HOSTS=zookeeper:2181
       - KAFKA_MANAGER_AUTH_ENABLED=true
@@ -38,5 +38,12 @@ services:
     depends_on:
       - zookeeper
     healthcheck:
-      test: curl -f http://127.0.0.1:9000/api/health || exit 1
+      test: curl -f http://127.0.0.1:9001/api/health || exit 1
     restart: unless-stopped
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.16.57.0/24
